@@ -21,9 +21,9 @@ Chatbot que responde en el evento sobre las carreras **Ingeniería de Sistemas e
 - [x] `.gitignore`, `.env.example` y `package.json` base
 
 ## Pendiente (en orden)
-1. [ ] Etapa 1: `server.js` con Express 5 y `/health`; `npm install`
-2. [ ] Etapa 2: `src/rag.js` (MiniSearch) y prueba de búsqueda con curl, sin IA
-3. [ ] Etapa 3: `src/llm.js` y `/api/chat` con Groq (120b, respaldo 20b y, si Groq falla, respuesta con el mejor fragmento sin IA)
+1. [x] Etapa 1: `server.js` con Express 5 y `/health`; `npm install`
+2. [x] Etapa 2: `src/rag.js` (MiniSearch) y prueba de búsqueda con curl, sin IA
+3. [x] Etapa 3: `src/llm.js` y `/api/chat` con Groq (120b, respaldo 20b y, si Groq falla, respuesta con el mejor fragmento sin IA)
 4. [ ] Etapa 4: frontend de chat (**con esto ya sirve para el evento**)
 5. [ ] Etapa 5: voz con Whisper
 6. [ ] Etapa 6: avatar con animación FLIP
@@ -51,3 +51,7 @@ cp .env.example .env   # y poner la llave real de Groq
 npm install
 npm start
 ```
+
+## Problemas resueltos
+- 401 Invalid API Key con la llave nueva: `node --env-file=.env` no pisa variables ya exportadas en la shell. Había una `GROQ_API_KEY` vieja en `~/.bashrc`. Se comentó esa línea y se reinició el servidor. Para evitarlo en local: `env -u GROQ_API_KEY npm start`.
+- Backend verificado: `/health`, `/api/search` y `/api/chat` con gpt-oss-120b y respaldo sin IA.
