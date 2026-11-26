@@ -373,7 +373,7 @@
     });
   }
 
-  // Voz de Lexio: usa /api/speak cuando el servidor la tenga. Mientras no exista, no hace nada.
+  // Voz de Lexio: suena por el mismo canal de audio que ya abrió el micrófono.
   async function hablar(texto, sesion, senal) {
     if (vozDisponible === false) return;
     try {
@@ -384,23 +384,32 @@
         signal: senal
       });
       if (r.status === 404 || r.status === 501 || r.status === 503) { vozDisponible = false; return; }
-      if (!r.ok || sesion !== live.sesion) return;
-      vozDisponible = true;
-      const blob = await r.blob();
       if (sesion !== live.sesion) return;
-      const url = URL.createObjectURL(blob);
-      const audio = parlante;
-      audio.src = url;
-      live.audio = audio;
+      if (!r.ok) throw new Error('servidor ' + r.status);
+      const datos = await r.arrayBuffer();
+      const ctx = live.ctx;
+      if (sesion !== live.sesion || !ctx) return;
+      if (ctx.state !== 'running') await Promise.race([ctx.resume(), new Promise((ok) => setTimeout(ok, 1000))]);
+      if (ctx.state !== 'running') throw new Error('audio ' + ctx.state);
+      const sonido = await new Promise((ok, mal) => ctx.decodeAudioData(datos, ok, mal));
+      if (sesion !== live.sesion) return;
+      const fuente = ctx.createBufferSource();
+      fuente.buffer = sonido;
+      fuente.connect(ctx.destination);
+      live.audio = { pause: () => fuente.stop() };
       setEstado('hablando', 'Hablando...');
       await new Promise((resolve) => {
-        audio.onended = resolve;
-        audio.onerror = resolve;
-        audio.play().catch(resolve);
+        // Si el teléfono no avisa que terminó, se sigue escuchando igual.
+        const tope = setTimeout(resolve, sonido.duration * 1000 + 1500);
+        fuente.onended = () => { clearTimeout(tope); resolve(); };
+        fuente.start();
       });
-      URL.revokeObjectURL(url);
       live.audio = null;
-    } catch (e) { /* sin voz: la respuesta igual se ve en pantalla */ }
+    } catch (e) {
+      if (e && e.name !== 'AbortError' && sesion === live.sesion) {
+        mensajeLive('No pude reproducir la voz (' + ((e && e.message) || 'error') + ').');
+      }
+    }
   }
 
   function detenerLive() {
