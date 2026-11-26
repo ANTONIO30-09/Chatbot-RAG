@@ -160,6 +160,8 @@
     ruido: 0.01, muestras: 0, cuenta: 0,
     ctrl: null, historial: [], audio: null
   };
+  const parlante = new Audio();
+  const SILENCIO = 'data:audio/wav;base64,UklGRsQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YaAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA';
   let vozDisponible = null; // null = aún no se sabe; false = el servidor no tiene /api/speak
 
   function setEstado(estado, texto) {
@@ -387,7 +389,8 @@
       const blob = await r.blob();
       if (sesion !== live.sesion) return;
       const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
+      const audio = parlante;
+      audio.src = url;
       live.audio = audio;
       setEstado('hablando', 'Hablando...');
       await new Promise((resolve) => {
@@ -417,6 +420,8 @@
 
   if (btnLive && liveOverlay) {
     btnLive.addEventListener('click', () => {
+      parlante.src = SILENCIO;
+      parlante.play().catch(() => {});
       btnLive.classList.add('active');
       liveOverlay.hidden = false;
 
