@@ -105,19 +105,69 @@
       <div id="mensajes" class="mensajes"></div>
     </main>
 
-    <form id="form" class="composer" autocomplete="off">
-      <button id="btn-mic" class="icon-btn" type="button" hidden aria-label="Hablar con el micrófono">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
-      </button>
-      <textarea id="entrada" rows="1" maxlength="600" placeholder="Escribe tu pregunta…" aria-label="Tu pregunta"></textarea>
-      <button id="btn-enviar" class="send" type="submit" aria-label="Enviar pregunta">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.4l12 2-12 2z"/></svg>
-      </button>
+        <form id="form" class="composer" autocomplete="off">
+      <div class="composer-pill">
+        <textarea id="entrada" rows="1" maxlength="600" placeholder="Escribe tu pregunta..." aria-label="Tu pregunta"></textarea>
+        
+                        <!-- Onda de Audio (Oculta por defecto) -->
+        <div id="waveform" class="waveform" hidden>
+          <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="composer-actions">
+                    <!-- Botón de Charla en vivo (Ondas de sonido) -->
+          <button id="btn-live" class="action-btn" type="button" title="Charla en vivo">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/>
+            </svg>
+          </button>
+          
+          <!-- Botón de Micrófono -->
+          <button id="btn-mic" class="action-btn" type="button" title="Dictar por voz">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </button>
+
+          <!-- Botón de Enviar -->
+          <button id="btn-enviar" class="send" type="submit" aria-label="Enviar pregunta">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.4l12 2-12 2z"/></svg>
+          </button>
+        </div>
+      </div>
     </form>
     
   </div>
 
-  <script src="js/chat.js"></script>
+      <!-- OVERLAY CHARLA EN VIVO / DICTADO -->
+  <div id="live-overlay" class="live-overlay" hidden>
+    <div class="live-container" id="live-container">
+      
+      <!-- Lado Izquierdo: Avatar -->
+      <div class="live-side-avatar">
+        <div class="live-avatar-wrapper">
+          <div class="live-pulse-ring"></div>
+          <div class="live-pulse-ring delay"></div>
+          <img src="img/cara_avatar.png" alt="Lexio" class="live-avatar">
+        </div>
+        <div class="live-name-badge">Lexio</div>
+      </div>
+
+      <!-- Lado Derecho: Texto en tiempo real -->
+      <div class="live-side-text" id="live-text-panel">
+        <div class="live-status" id="live-status">
+          <span class="dot"></span> <span id="status-text">Escuchando...</span>
+        </div>
+        <div class="live-transcription" id="live-transcription">
+          <span class="placeholder-text">Habla ahora, estoy procesando tu voz...</span>
+        </div>
+      </div>
+
+    </div>
+    
+    <!-- Botón de finalizar flotante abajo -->
+    <button id="btn-close-live" class="live-close" type="button">Finalizar</button>
+  </div>
+
+  <script src="js/chat.js"></script> src="js/chat.js"></script> src="js/chat.js"></script>
   <script src="js/voice.js"></script>
   <script src="js/avatar.js"></script>
 </body>

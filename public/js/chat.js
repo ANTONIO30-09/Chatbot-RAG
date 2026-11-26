@@ -172,6 +172,9 @@
     e.preventDefault();
     const t = el.entrada.value;
     el.entrada.value = '';
+    el.entrada.hidden = false; // Restaurar input si estaba en modo voz
+    document.getElementById('waveform').hidden = true;
+    document.getElementById('btn-mic').classList.remove('active');
     autoajustar();
     enviar(t);
   });
