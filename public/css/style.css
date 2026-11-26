@@ -1251,3 +1251,6 @@ body {
 
 /* TEXTO CLARO EN VOZ: el fondo es oscuro aunque el equipo use tema claro */
 .live-overlay { --ink: #f5f2ec; --muted: #a8a5a0; color: var(--ink); }
+
+/* TEXTO CLARO EN COMPOSER: la píldora es oscura aunque el equipo use tema claro */
+.composer { --ink: #ffffff; --muted: #c9c5bf; }
