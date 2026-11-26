@@ -1248,3 +1248,6 @@ body {
   .live-side-text { flex: none; width: 100%; gap: 10px; }
   .live-transcription { height: 45dvh; padding: 16px; font-size: 16px; }
 }
+
+/* TEXTO CLARO EN VOZ: el fondo es oscuro aunque el equipo use tema claro */
+.live-overlay { --ink: #f5f2ec; --muted: #a8a5a0; color: var(--ink); }
