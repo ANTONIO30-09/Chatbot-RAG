@@ -1,0 +1,581 @@
+/* ==========================================================
+   Asistente de carreras UNIFRANZ · Glassmorphism iOS
+   Paleta: blanco / negro / naranja (marca)
+   ========================================================== */
+
+:root {
+  color-scheme: light dark;
+
+  /* Marca */
+  --brand-amber: #ffcf1f;
+  --brand-orange: #ff5a1f;
+  --brand-deep: #d63a0f;
+
+  /* Base tema claro */
+  --bg: #fbf7f0;
+  --ink: #1b1b1f;
+  --muted: #6b6b74;
+  --line: rgba(27,27,31,.08);
+
+  /* Cristal (tema claro) */
+  --glass-bg: rgba(255,255,255,.55);
+  --glass-border: rgba(255,255,255,.7);
+  --glass-shadow: 0 30px 60px -20px rgba(214,58,15,.25), 0 8px 20px rgba(0,0,0,.06), inset 0 1px 0 rgba(255,255,255,.6);
+  --blur: 24px;
+
+  /* Burbujas */
+  --bubble-bot-bg: rgba(255,255,255,.7);
+  --bubble-bot-border: rgba(255,255,255,.85);
+  --bubble-bot-ink: #1b1b1f;
+
+  --bubble-user-bg: linear-gradient(135deg, #ff7a3d 0%, #d63a0f 100%);
+  --bubble-user-ink: #ffffff;
+
+  /* Acento */
+  --accent: #ff5a1f;
+  --accent-soft: rgba(255,90,31,.12);
+  --accent-strong: #d63a0f;
+
+  /* Wallpaper */
+  --wall-1: rgba(255,207,31,.45);
+  --wall-2: rgba(255,90,31,.35);
+  --wall-3: rgba(214,58,15,.28);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12100e;
+    --ink: #f5f2ec;
+    --muted: #a8a5a0;
+    --line: rgba(255,255,255,.09);
+
+    --glass-bg: rgba(28,26,24,.55);
+    --glass-border: rgba(255,255,255,.1);
+    --glass-shadow: 0 30px 60px -20px rgba(0,0,0,.6), 0 8px 20px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.08);
+
+    --bubble-bot-bg: rgba(40,38,36,.72);
+    --bubble-bot-border: rgba(255,255,255,.1);
+    --bubble-bot-ink: #f5f2ec;
+
+    --bubble-user-bg: linear-gradient(135deg, #ff7a3d 0%, #ff5a1f 100%);
+    --bubble-user-ink: #1b1410;
+
+    --accent: #ff7a3d;
+    --accent-soft: rgba(255,122,61,.16);
+    --accent-strong: #ff5a1f;
+
+    --wall-1: rgba(255,207,31,.16);
+    --wall-2: rgba(255,90,31,.2);
+    --wall-3: rgba(214,58,15,.18);
+  }
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- Fondo estilo iOS ---------- */
+.ios-wallpaper {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(60vmax 60vmax at 15% 10%, var(--wall-1), transparent 60%),
+    radial-gradient(55vmax 55vmax at 85% 20%, var(--wall-2), transparent 60%),
+    radial-gradient(70vmax 70vmax at 50% 100%, var(--wall-3), transparent 65%),
+    var(--bg);
+}
+
+/* ---------- Marco de cristal ---------- */
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  width: 100vw;
+  max-width: none;
+  margin: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+@media (min-width: 820px) {
+  .app {
+    height: 100dvh;
+    margin: 0 auto;
+    border-radius: 0;
+    overflow: visible;
+  }
+}
+
+/* ---------- Topbar ---------- */
+.topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background: transparent;
+  border: none;
+  z-index: 10;
+}
+
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 8px;
+  background: #000;
+  object-fit: contain;
+  border: 1px solid rgba(255,90,31,.3);
+  filter: drop-shadow(0 0 10px rgba(255,90,31,.6));
+}
+.brand strong { display: block; font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
+.brand span { display: block; font-size: 12.5px; color: var(--muted); }
+
+.ghost {
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.4);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 8px 15px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s ease;
+}
+@media (prefers-color-scheme: dark) { .ghost { background: rgba(255,255,255,.06); } }
+.ghost:hover { border-color: var(--accent); color: var(--accent); }
+.ghost:active { transform: scale(.96); }
+
+/* ---------- Chat ---------- */
+.chat {
+  flex: 1;
+  width: 100%;
+  height: 100vh; /* Altura exacta de la pantalla */
+  overflow: hidden; /* Bloquea el scroll en el Hero */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Hero Inmersivo ---------- */
+.hero {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  animation: entrada .4s ease both;
+}
+
+@media (min-width: 900px) {
+  .hero {
+    flex-direction: row;
+    text-align: left;
+    padding: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    flex-direction: row;
+    text-align: left;
+    align-items: stretch; /* Estira las columnas al 100% de altura */
+    padding: 0;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    flex-direction: row;
+    text-align: left;
+    padding: 0;
+  }
+}
+
+.hero.oculto { display: none; }
+
+/* Columna Izquierda: Avatar Masivo */
+.hero-visual {
+  position: relative;
+  flex: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Ancla al fondo */
+  height: 100%;
+  overflow: visible; /* Permite que el avatar se desborde sin cortarse */
+}
+
+/* Iluminación LED expansiva */
+.led-glow {
+  position: fixed;
+  top: 50%;
+  left: 40%;
+  width: 120vw;
+  height: 120vh;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle at center, rgba(255,90,31,0.4) 0%, transparent 70%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes pulse-glow {
+  0% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.95); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* El avatar ENORME */
+.hero-avatar {
+  width: auto;
+  height: 95%; /* Un poco más bajo para que el rostro se vea completo */
+  max-width: none;
+  object-fit: contain;
+  object-position: bottom center;
+  position: absolute;
+  bottom: 0; /* Anclado justo al borde inferior sin desbordarse */
+  z-index: 1;
+  transform: scale(1.08); /* Reducido de 1.25 a 1.20 (El 5% menos) */
+  transform-origin: bottom center;
+  filter: drop-shadow(0 0 40px rgba(255,90,31,.8))
+          drop-shadow(0 0 100px rgba(255,90,31,.5));
+}
+
+/* Columna Derecha: Texto y Chips */
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 2;
+  padding: 0 40px;
+  height: 100%;
+}
+
+@media (min-width: 900px) {
+  .hero-content { align-items: flex-start; }
+}
+
+.hero h1 {
+  font-size: clamp(36px, 5vw, 54px); /* Tamaño más contenido */
+  line-height: 1.1;
+  letter-spacing: -.02em;
+  font-weight: 800;
+  margin: 0 0 8px;
+  background: linear-gradient(135deg, #ffffff 0%, #ffcf1f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  color: var(--muted);
+  margin: 0 0 18px;
+  font-size: 15px;
+  line-height: 1.5;
+  max-width: 440px;
+}
+
+/* Ajuste de los chips para el nuevo diseño */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+@media (min-width: 900px) {
+  .chips { justify-content: flex-start; }
+}
+
+.chip {
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,.03);
+  color: var(--ink);
+  padding: 8px 14px; /* Más compactos */
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(255,90,31,.1);
+  transform: translateY(-2px);
+}
+
+/* ---------- Mensajes ---------- */
+.mensajes { display: flex; flex-direction: column; gap: 10px; }
+
+.fila {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  animation: entrada .25s ease both;
+}
+.fila.bot     { align-self: flex-start; max-width: 92%; }
+.fila.usuario { align-self: flex-end; flex-direction: row-reverse; max-width: 80%; }
+
+@keyframes entrada {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.msg-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex: none;
+  background: #000;
+  object-fit: contain;
+  border: 1px solid rgba(255,90,31,.3);
+  filter: drop-shadow(0 0 8px rgba(255,90,31,.6));
+}
+
+.burbuja {
+  padding: 11px 15px;
+  border-radius: 20px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  line-height: 1.45;
+  font-size: 15px;
+}
+
+.fila.bot .burbuja {
+  background: var(--bubble-bot-bg);
+  border: 1px solid var(--bubble-bot-border);
+  border-bottom-left-radius: 6px;
+  color: var(--bubble-bot-ink);
+  box-shadow: 0 2px 10px rgba(0,0,0,.04), inset 0 1px 0 rgba(255,255,255,.5);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+@media (prefers-color-scheme: dark) {
+  .fila.bot .burbuja { box-shadow: 0 2px 10px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.06); }
+}
+
+.fila.usuario .burbuja {
+  background: var(--bubble-user-bg);
+  color: var(--bubble-user-ink);
+  border: 1px solid rgba(255,255,255,.2);
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 6px 20px -6px rgba(214,58,15,.5);
+  white-space: pre-wrap;
+}
+
+.fila.error .burbuja {
+  border-color: var(--accent-strong);
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.burbuja p { margin: 0 0 8px; }
+.burbuja p:last-child { margin-bottom: 0; }
+.burbuja ul { margin: 4px 0 8px; padding-left: 20px; }
+.burbuja li { margin: 4px 0; }
+.burbuja strong { font-weight: 600; }
+
+/* ---------- Puntos "escribiendo" ---------- */
+.puntos { display: flex; gap: 5px; padding: 4px 2px; }
+.puntos i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); animation: salto 1.2s infinite; }
+.puntos i:nth-child(2) { animation-delay: .15s; }
+.puntos i:nth-child(3) { animation-delay: .3s; }
+
+@keyframes salto {
+  0%, 60%, 100% { transform: translateY(0); opacity: .5; }
+  30%           { transform: translateY(-5px); opacity: 1; }
+}
+
+/* ---------- Composer ---------- */
+.composer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 0 40px 30px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  z-index: 10;
+}
+
+
+.composer textarea {
+  flex: 1;
+  resize: none;
+  max-height: 140px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 24px;
+  padding: 14px 20px;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.4;
+  background: rgba(0,0,0,.3);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  color: var(--ink);
+  transition: border-color .15s, background .15s;
+  box-shadow: none;
+}
+
+.composer textarea::placeholder { color: var(--muted); }
+.composer textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(0,0,0,.4);
+}
+
+.icon-btn, .send {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+
+.icon-btn {
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,.5);
+  color: var(--ink);
+}
+@media (prefers-color-scheme: dark) { .icon-btn { background: rgba(255,255,255,.08); } }
+.icon-btn:hover { border-color: var(--accent); color: var(--accent); }
+.icon-btn:active { transform: scale(.92); }
+
+.send {
+  border: 0;
+  background: linear-gradient(135deg, #ff7a3d 0%, #d63a0f 100%);
+  color: #fff;
+  box-shadow: 0 6px 16px -4px rgba(214,58,15,.5);
+}
+.send:hover  { filter: brightness(1.05); }
+.send:active { transform: scale(.92); }
+.send:disabled { opacity: .5; cursor: not-allowed; filter: grayscale(.3); }
+
+.icon-btn.grabando {
+  background: #ff3b30;
+  border-color: #ff3b30;
+  color: #fff;
+  animation: pulso 1.2s infinite;
+}
+
+@keyframes pulso {
+  0%   { box-shadow: 0 0 0 0 rgba(255,59,48,.6); }
+  70%  { box-shadow: 0 0 0 12px rgba(255,59,48,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,59,48,0); }
+}
+
+/* ---------- Aviso ---------- */
+
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.brand-logo {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+  /* El logo original es oscuro. Lo volvemos blanco con filtro y le damos brillo */
+  filter: brightness(0) invert(1) drop-shadow(0 0 10px rgba(255,90,31,.4));
+  transition: filter .3s;
+}
+.brand-logo:hover {
+  filter: brightness(0) invert(1) drop-shadow(0 0 15px rgba(255,90,31,.8));
+}
+
+/* Estilo para el significado de Lexio */
+.lexio-meaning {
+  font-size: 14px !important;
+  letter-spacing: 0.5px;
+  color: var(--brand-amber) !important;
+  margin-bottom: 12px !important;
+  font-weight: 500;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+/* ---------- SVGs de Dibujo a Mano ---------- */
+.deco-svg {
+  fill: none;
+  stroke: var(--brand-orange);
+  stroke-width: 1.5; /* Más fino para apreciar el detalle */
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  position: absolute;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(0 0 8px rgba(255, 90, 31, 0.8)) drop-shadow(0 0 20px rgba(255, 90, 31, 0.4));
+  opacity: 0.9;
+}
+
+.deco-izq {
+  width: 140px;
+  height: 140px;
+  top: 17%; 
+  left: 25%; /* Movido de 15% a 25% */
+}
+
+.deco-der {
+  width: 160px; /* Un poco más pequeña para equilibrar */
+  height: 160px;
+  top: 15%; /* Nivelado con el chip */
+  left: 35%;
+}
+
+/* Animación de trazo */
+.deco-svg path,
+.deco-svg rect,
+.deco-svg circle {
+  /* Se inicializan por JS */
+}
+
+.deco-svg.dibujar path,
+.deco-svg.dibujar rect,
+.deco-svg.dibujar circle {
+  animation-name: trazar;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: forwards;
+}
+
+
+
+@keyframes trazar {
+  to { stroke-dashoffset: 0; }
+}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Asistente virtual">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffcf1f"/>
+      <stop offset="1" stop-color="#ff5a1f"/>
+    </linearGradient>
+  </defs>
+  <circle cx="60" cy="60" r="58" fill="url(#g)"/>
+  <rect x="30" y="48" width="60" height="44" rx="16" fill="#ffffff"/>
+  <circle cx="48" cy="69" r="6" fill="#1b1b1f"/>
+  <circle cx="72" cy="69" r="6" fill="#1b1b1f"/>
+  <path d="M50 81 Q60 89 70 81" stroke="#1b1b1f" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M60 20 L100 39 L60 58 L20 39 Z" fill="#1b1b1f"/>
+  <path d="M40 50 V60 Q60 70 80 60 V50 L60 58 Z" fill="#33333a"/>
+  <line x1="100" y1="39" x2="100" y2="58" stroke="#1b1b1f" stroke-width="3"/>
+  <circle cx="100" cy="61" r="4" fill="#ffcf1f"/>
+</svg>
