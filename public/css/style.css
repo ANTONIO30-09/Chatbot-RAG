@@ -502,14 +502,17 @@ body {
 .deco-svg {
   fill: none;
   stroke: var(--brand-orange);
-  stroke-width: 1.5; /* Más fino para apreciar el detalle */
+  stroke-width: 2.5; /* Un poco más grueso para que la luz se note más */
   stroke-linecap: round;
   stroke-linejoin: round;
   position: absolute;
   pointer-events: none;
   z-index: 0;
-  filter: drop-shadow(0 0 8px rgba(255, 90, 31, 0.8)) drop-shadow(0 0 20px rgba(255, 90, 31, 0.4));
-  opacity: 0.9;
+  /* Neón potente de 3 capas (núcleo brillante, resplandor medio y aura expansiva) */
+  filter: drop-shadow(0 0 4px rgba(255, 90, 31, 1))
+          drop-shadow(0 0 15px rgba(255, 90, 31, 0.8))
+          drop-shadow(0 0 35px rgba(255, 90, 31, 0.6));
+  opacity: 1; /* Opacidad total para máximo brillo */
 }
 
 .deco-izq {
@@ -1212,4 +1215,36 @@ body {
   background: rgba(255, 90, 31, 0.2);
   border-color: var(--brand-orange);
   color: var(--brand-orange);
+}
+
+/* Charla en vivo: líneas de la conversación */
+.live-line { margin: 0 0 .9rem; line-height: 1.5; }
+.live-user { opacity: .7; font-size: .95em; }
+.live-user::before { content: "Tú · "; opacity: .7; }
+.live-bot { font-weight: 500; }
+.live-bot::before { content: "Lexio · "; opacity: .7; }
+.live-nota { margin: 0 0 .9rem; opacity: .6; font-size: .9em; font-style: italic; }
+
+/* ========== PANEL DE VOZ COMPACTO ========== */
+.live-overlay { gap: 20px; padding: 20px; }
+.live-container { min-height: 0; }
+.live-side-text { min-width: 0; min-height: 0; }
+.live-transcription {
+  height: min(55dvh, 460px);
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 22px 24px;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,90,31,.6) transparent;
+}
+.live-close { position: static; flex: none; }
+@media (max-width: 700px) {
+  .live-container.active-session { flex-direction: column; gap: 14px; width: 100%; }
+  .live-avatar-wrapper { width: 110px; height: 110px; }
+  .live-name-badge { display: none; }
+  .live-side-text { flex: none; width: 100%; gap: 10px; }
+  .live-transcription { height: 45dvh; padding: 16px; font-size: 16px; }
 }

@@ -1,21 +1,47 @@
 const config = require('./config');
 
-async function llamar(modelo, mensajes) {
+// Orden de intento: modelos de Groq y después Gemini. Solo entran los que tienen llave.
+function proveedores() {
+  const lista = [];
+  if (config.GROQ_API_KEY) {
+    for (const modelo of config.MODELOS) {
+      lista.push({
+        modelo,
+        url: config.GROQ_BASE + '/chat/completions',
+        llave: config.GROQ_API_KEY,
+        timeout: config.LLM_TIMEOUT_MS,
+        extra: (opts) => ({ temperature: 0.6, max_completion_tokens: opts.modo === 'voz' ? 700 : 1200 })
+      });
+    }
+  }
+  if (config.GEMINI_API_KEY) {
+    lista.push({
+      modelo: config.GEMINI_MODEL,
+      url: config.GEMINI_BASE + '/chat/completions',
+      llave: config.GEMINI_API_KEY,
+      timeout: config.GEMINI_TIMEOUT_MS,
+      // Margen amplio porque el razonamiento también consume tokens.
+      extra: () => ({ max_tokens: 2000 })
+    });
+  }
+  return lista;
+}
+
+async function llamar(p, mensajes, opts) {
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), config.LLM_TIMEOUT_MS);
+  const timer = setTimeout(() => ctrl.abort(), p.timeout);
   try {
-    const r = await fetch(config.GROQ_BASE + '/chat/completions', {
+    const r = await fetch(p.url, {
       method: 'POST',
       headers: {
-        Authorization: 'Bearer ' + config.GROQ_API_KEY,
+        Authorization: 'Bearer ' + p.llave,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: modelo,
+        model: p.modelo,
         messages: mensajes,
-        temperature: 0.3,
-        max_completion_tokens: 1200,
-        reasoning_effort: 'low'
+        reasoning_effort: 'low',
+        ...p.extra(opts)
       }),
       signal: ctrl.signal
     });
@@ -29,16 +55,17 @@ async function llamar(modelo, mensajes) {
   }
 }
 
-// Prueba el modelo principal y, si falla, el de respaldo.
-async function responder(mensajes) {
-  if (!config.GROQ_API_KEY) throw new Error('Falta GROQ_API_KEY');
+// Prueba cada proveedor en orden hasta que uno responda.
+async function responder(mensajes, opts = {}) {
+  const lista = proveedores();
+  if (!lista.length) throw new Error('No hay llaves de IA configuradas');
   const errores = [];
-  for (const modelo of config.MODELOS) {
+  for (const p of lista) {
     try {
-      return { texto: await llamar(modelo, mensajes), modelo };
+      return { texto: await llamar(p, mensajes, opts), modelo: p.modelo };
     } catch (e) {
-      console.error('[llm] fallo ' + modelo + ': ' + e.message);
-      errores.push(modelo + ': ' + e.message);
+      console.error('[llm] fallo ' + p.modelo + ': ' + e.message);
+      errores.push(p.modelo + ': ' + e.message);
     }
   }
   const err = new Error('Todos los modelos fallaron');

@@ -1,5 +1,16 @@
 const config = require('./config');
 
+// Frases que Whisper inventa cuando el audio es silencio o ruido.
+const ALUCINACIONES = new Set([
+  'gracias', 'gracias por ver el video', 'gracias por ver', 'suscribete',
+  'subtitulos por la comunidad de amara.org', 'amara.org'
+]);
+
+function normal(s) {
+  return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9. ]/g, '').trim().replace(/\.+$/, '');
+}
+
 function extension(mime) {
   const m = String(mime || '').toLowerCase();
   if (m.includes('webm')) return 'webm';
@@ -17,7 +28,7 @@ async function transcribir(buffer, mime) {
   fd.append('model', config.STT_MODEL);
   fd.append('language', 'es');
   fd.append('temperature', '0');
-  fd.append('response_format', 'json');
+  fd.append('response_format', 'verbose_json');
   fd.append('prompt', 'UNIFRANZ, microcredenciales, menciones, Ingeniería de Sistemas e Innovación Digital, Derecho, blockchain, Legal Tech, ciberseguridad');
 
   const ctrl = new AbortController();
@@ -31,7 +42,11 @@ async function transcribir(buffer, mime) {
     });
     if (!r.ok) throw new Error('HTTP ' + r.status + ': ' + (await r.text()).slice(0, 300));
     const data = await r.json();
-    return String(data.text || '').trim();
+    const segs = Array.isArray(data.segments) ? data.segments : [];
+    if (segs.length && segs.every((s) => s.no_speech_prob > 0.6)) return '';
+    const texto = String(data.text || '').trim();
+    if (ALUCINACIONES.has(normal(texto))) return '';
+    return texto;
   } finally {
     clearTimeout(timer);
   }

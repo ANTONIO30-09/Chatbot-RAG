@@ -35,9 +35,12 @@ function limpiarHistorial(h) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 1500) }));
 }
 
-function respaldoSinIA(fuentes) {
+function respaldoSinIA(fuentes, modo) {
+  if (modo === 'voz') {
+    return 'Perdona, se me cortó la conexión un momento. ¿Me repites la pregunta en unos segundos?';
+  }
   const c = fuentes[0];
-  return 'Ahora mismo mi asistente de IA no está disponible, pero esto es lo más relevante que encontré:\n\n' +
+  return 'Se me cortó un momento la conexión con mi parte de inteligencia artificial, pero esto es lo más cercano que tengo sobre tu pregunta:\n\n' +
     c.titulo + '\n' + c.texto +
     '\n\nPara más detalles escribe a info@unifranz.edu.bo o al WhatsApp +591 71502211.';
 }
@@ -63,6 +66,7 @@ router.post('/api/chat', limitar, async (req, res) => {
     return res.status(400).json({ error: 'La pregunta es muy larga (máximo ' + config.MAX_MSG_CHARS + ' caracteres).' });
   }
 
+  const modo = cuerpo.modo === 'voz' ? 'voz' : 'texto';
   const historial = limpiarHistorial(cuerpo.history);
   const previos = historial.filter((m) => m.role === 'user').map((m) => m.content);
 
@@ -72,15 +76,16 @@ router.post('/api/chat', limitar, async (req, res) => {
   const consulta = msg.split(/\s+/).length < 6 && previos.length ? previos[previos.length - 1] + ' ' + msg : msg;
 
   const fuentes = rag.buscar(consulta, { carrera });
-  const mensajes = [{ role: 'system', content: construirPrompt(fuentes) }, ...historial, { role: 'user', content: msg }];
+  const sistema = construirPrompt(fuentes, { modo, primerMensaje: historial.length === 0 });
+  const mensajes = [{ role: 'system', content: sistema }, ...historial, { role: 'user', content: msg }];
   const ids = fuentes.map((f) => f.id);
 
   try {
-    const r = await responder(mensajes);
-    return res.json({ respuesta: r.texto, modelo: r.modelo, carrera, fuentes: ids });
+    const r = await responder(mensajes, { modo });
+    return res.json({ respuesta: r.texto, modelo: r.modelo, modo, carrera, fuentes: ids });
   } catch (e) {
     console.error('[chat] respaldo sin IA:', e.message);
-    return res.json({ respuesta: respaldoSinIA(fuentes), modelo: 'sin-ia', carrera, fuentes: ids });
+    return res.json({ respuesta: respaldoSinIA(fuentes, modo), modelo: 'sin-ia', modo, carrera, fuentes: ids });
   }
 });
 

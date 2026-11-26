@@ -198,6 +198,7 @@
   window.Chat = {
     enviar,
     ponerTexto(t) { el.entrada.value = t; autoajustar(); el.entrada.focus(); },
-    estaOcupado: () => ocupado
+    estaOcupado: () => ocupado,
+    avisar: (t) => mostrarBot(t, true)
   };
 })();

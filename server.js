@@ -14,6 +14,7 @@ app.disable('x-powered-by');
 
 app.use(express.json({ limit: '50kb' }));
 app.use(routes);
+app.use(require("./src/speak"));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res) => res.status(404).json({ error: 'No encontrado' }));
